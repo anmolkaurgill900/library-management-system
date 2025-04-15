@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <string.h>
+struct Book {
+int bookID;
+char title[50];
+char author[50];
+int availableCopies;
+};
+struct User {
+int userID;
+char name[50];
+int borrowedBookID;
+};
+#define MAX_BOOKS 10
+#define MAX_USERS 5
+struct Book books[MAX_BOOKS];
+struct User users[MAX_USERS];
+int bookCount = 0;
+int userCount = 0;
+void addBook() {
+if (bookCount < MAX_BOOKS) {
+struct Book newBook;
+printf("Enter Book ID: ");
+scanf("%d", &newBook.bookID);
+getchar();
+printf("Enter Book Title: ");
+fgets(newBook.title, sizeof(newBook.title), stdin);
+newBook.title[strcspn(newBook.title, "\n")] = '\0';
+printf("Enter Author Name: ");
+fgets(newBook.author, sizeof(newBook.author), stdin);
+newBook.author[strcspn(newBook.author, "\n")] = '\0';
+printf("Enter Number of Available Copies: ");
+scanf("%d", &newBook.availableCopies);
+books[bookCount++] = newBook;
+printf("Book added successfully.\n");
+} else {
+printf("Library is full!\n");
+}
+}
+void listBooks() {
+if (bookCount == 0) {
+printf("No books available.\n");
+return;
+}
+printf("\nList of Books:\n");
+for (int i = 0; i < bookCount; i++) {
+printf("ID: %d, Title: %s, Author: %s, Available Copies:
+%d\n",
+books[i].bookID, books[i].title, books[i].author,
+books[i].availableCopies);
+}
+}
+void borrowBook() {
+int userID, bookID;
+printf("Enter your User ID: ");
+scanf("%d", &userID);
+int userFound = 0;
+for (int i = 0; i < userCount; i++) {
+if (users[i].userID == userID) {
+userFound = 1;
+break;
+}
+}
+if (!userFound) {
+printf("User not found.\n");
+return;
+}
+printf("Enter Book ID to borrow: ");
+scanf("%d", &bookID);
+int bookFound = 0;
+for (int i = 0; i < bookCount; i++) {
+if (books[i].bookID == bookID) {
+bookFound = 1;
+if (books[i].availableCopies > 0) {
+books[i].availableCopies--;
+printf("Book borrowed successfully.\n");
+} else {
+printf("No available copies.\n");
+}
+break;
+}
+}
+if (!bookFound) {
+printf("Book not found.\n");
+}
+}
+void returnBook() {
+int userID, bookID;
+printf("Enter your User ID: ");
+scanf("%d", &userID);
+int userFound = 0;
+for (int i = 0; i < userCount; i++) {
+if (users[i].userID == userID) {
+userFound = 1;
+break;
+}
+}
+if (!userFound) {
+printf("User not found.\n");
+return;
+}
+printf("Enter Book ID to return: ");
+scanf("%d", &bookID);
+int bookFound = 0;
+for (int i = 0; i < bookCount; i++) {
+if (books[i].bookID == bookID) {
+bookFound = 1;
+books[i].availableCopies++;
+printf("Book returned successfully.\n");
+break;
+}
+}
+if (!bookFound) {
+printf("Book not found.\n");
+}
+}
+void addUser() {
+if (userCount < MAX_USERS) {
+struct User newUser;
+printf("Enter User ID: ");
+scanf("%d", &newUser.userID);
+getchar(); // Consume newline character
+printf("Enter User Name: ");
+fgets(newUser.name, sizeof(newUser.name), stdin);
+newUser.name[strcspn(newUser.name, "\n")] = '\0';
+newUser.borrowedBookID = 0;
+users[userCount++] = newUser;
+printf("User added successfully.\n");
+} else {
+printf("User list is full!\n");
+}
+}
+int main() {
+int choice;
+while (1) {
+printf("\nLibrary Management System\n");
+printf("1. Add Book\n");
+printf("2. List Books\n");
+printf("3. Borrow Book\n");
+printf("4. Return Book\n");
+printf("5. Add User\n");
+printf("6. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+addBook();
+break;
+case 2:
+listBooks();
+break;
+case 3:
+borrowBook();
+break;
+case 4:
+returnBook();
+break;
+case 5:
+addUser();
+break;
+case 6:
+printf("Exiting system...\n");
+return 0;
+default:
+printf("Invalid choice! Please try again.\n");
+}
+}
+}
